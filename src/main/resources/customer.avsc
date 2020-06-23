@@ -1,0 +1,9 @@
+{"namespace": "org.example.avrodemo.dto",
+ "type": "record",
+ "name": "Customer",
+ "fields": [
+     {"name": "id", "type": "int"},
+     {"name": "fullname",  "type": ["string", "null"]},
+     {"name": "city", "type": ["string", "null"]}
+ ]
+}
