@@ -10,8 +10,6 @@ import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.example.avrodemo.dto.Customer;
 
-import com.fasterxml.jackson.databind.deser.std.NumberDeserializers.LongDeserializer;
-
 import io.confluent.kafka.serializers.KafkaAvroDeserializer;
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig;
 
@@ -27,7 +25,7 @@ public class AvroConsumer {
 		props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,Constants.KAFKA_SERVER_URLs);
 		props.put(ConsumerConfig.CLIENT_ID_CONFIG,CLIENT_ID);
 		props.put(ConsumerConfig.GROUP_ID_CONFIG, "AvroConsumerGroupID");
-        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,LongDeserializer.class.getName());
+        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,KafkaAvroDeserializer.class.getName());
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,KafkaAvroDeserializer.class.getName());  
         //Use Specific Record or else you get Avro GenericRecord.
         props.put(KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG, "true");
@@ -43,14 +41,16 @@ public class AvroConsumer {
 		//topics.add("test-topic");
 		topics.add(TOPIC);
 		c.consumer.subscribe(topics);
-		
+		//Alternate way to subscribe to topic
+		//c.consumer.subscribe(Collections.singletonList(TOPIC));
 		try {
 			while(true) {
-				ConsumerRecords<Long, Customer> records = c.consumer.poll(20000);
+				ConsumerRecords<Long, Customer> records = c.consumer.poll(200);
 				System.out.println("consumer waiting/polling for 20000 milliseconds/20seconds");
 				for(ConsumerRecord<Long, Customer> record: records) {
 					System.out.println(String.format("Topic: - %s, Partition: - %d, Value: %s",
-							record.topic(), record.partition(), record.value()));
+							record.topic(), record.partition(),record.value() ));
+					//System.out.println("record= "+ record.key() + " "+record.value().getId()+" "+ record.value().getFullname()+" "+record.value().getCity());
 				}
 			}
 		} catch (Exception e) {

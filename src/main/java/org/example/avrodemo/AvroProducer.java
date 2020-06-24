@@ -20,7 +20,7 @@ public class AvroProducer {
 
 	public AvroProducer() {
 		Properties props = new Properties();
-        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, Constants.KAFKA_SERVER_URLs);
         props.put(ProducerConfig.CLIENT_ID_CONFIG, CLIENT_ID);
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
                 LongSerializer.class.getName());
@@ -46,9 +46,9 @@ public class AvroProducer {
 		Customer customer = Customer.newBuilder().setId(1).setFullname("Prashanth").setCity("Hyderabad").build();
 		try {
 			IntStream.range(1, 30).forEach(i -> {
-				System.out.println("message " + i);
 				//p.producer.send(new ProducerRecord<>("test-topic", String.valueOf(i), "message " + i));
 				p.producer.send(new ProducerRecord<>(TOPIC, 1L * i, customer));
+				System.out.println("Topic= "+ TOPIC + "customer details = "+customer.getId()+":"+customer.getFullname()+":"+customer.getCity());
 			});
 		} catch (Exception e) {
 			e.printStackTrace();
